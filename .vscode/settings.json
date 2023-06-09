@@ -1,0 +1,23 @@
+{
+    "cmake.configureOnOpen": true,
+    "code-runner.runInTerminal": true,
+    "debug.onTaskErrors": "showErrors",
+    "git.autofetch": true,
+    "[python]": {
+        
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.formatOnType": true,
+        "editor.wordBasedSuggestions": false,
+        "gitlens.codeLens.symbolScopes": [
+            "!Module"
+        ]
+    },
+    "files.associations": {
+        "*.py": "python"
+    },
+    "python.autoComplete.extraPaths": [],
+    "CodeGPT.query.language": "Portuguese",
+    "python.defaultInterpreterPath": "/home/jwillians/micromamba/bin",
+    "python.analysis.extraPaths": [],
+    "python.condaPath": "/home/jwillians/micromamba/condabin/conda"
+}
