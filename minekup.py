@@ -9,10 +9,13 @@ from tqdm import tqdm
 from pathlib import Path
 from datetime import datetime
 
-# Configurações
-FTP_HOST = "ftp.dominio.com.br"
-FTP_USER = "usuario"
-FTP_PASS = "senha"
+# Carrega o arquivo de configuração.
+with open('config.json') as config_file:
+    config = json.load(config_file)
+
+FTP_HOST = config["FTP_HOST"]
+FTP_USER = config["FTP_USER"]
+FTP_PASS = config["FTP_PASS"]
 
 # Ajuste o diretório base para ser o diretório home do usuário atual
 HOME_DIR = os.path.expanduser('~')
