@@ -1,6 +1,15 @@
 {
     "FTP_HOST": "ftp.jwillians.com.br",
     "FTP_USER": "test@jwillians.com.br",
-    "FTP_PASS": "Gitminekup@"
+    "FTP_PASS": "Gitminekup@",
+    "FTP_DIR": "/",
+    
+    "MINECRAFT_DIR": "/home/jwillians/New_Caprica",
+    "BACKUP_DIR": "/home/jwillians/MineKup",
+    "LOG_DIR": "/home/jwillians/MineKup/logs",
+    
+    "PAPER_API": "https://papermc.io/api/v2/projects/paper/versions/1.19.4/",
+    
+    "PAPER_JAR": "/home/jwillians/New_Caprica/paper.jar",
+    "VERSION_HISTORY": "/home/jwillians/New_Caprica/version_history.json"
 }
-

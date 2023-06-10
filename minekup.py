@@ -16,16 +16,12 @@ with open('config.json') as config_file:
 FTP_HOST = config["FTP_HOST"]
 FTP_USER = config["FTP_USER"]
 FTP_PASS = config["FTP_PASS"]
-
-# Ajuste o diretório base para ser o diretório home do usuário atual
-HOME_DIR = os.path.expanduser('~')
-
-MINECRAFT_DIR = f"{HOME_DIR}/New_Caprica"
-BACKUP_DIR = f"{HOME_DIR}/MinecraftBackups"
-LOG_DIR = f"{BACKUP_DIR}/logs"
-PAPER_JAR = f"{MINECRAFT_DIR}/paper.jar"
-API_PAPER = "https://papermc.io/api/v2/projects/paper/versions/1.19.4/"
-VERSION_HISTORY = f"{MINECRAFT_DIR}/version_history.json"
+MINECRAFT_DIR = config["MINECRAFT_DIR"]
+BACKUP_DIR = config["BACKUP_DIR"]
+LOG_DIR = config["LOG_DIR"]
+PAPER_JAR = config["PAPER_JAR"]
+API_PAPER = config["PAPER_API"]
+VERSION_HISTORY = config["VERSION_HISTORY"]
 
 # Cria as pastas de backup e log se elas não existirem
 Path(BACKUP_DIR).mkdir(parents=True, exist_ok=True)
@@ -87,7 +83,7 @@ def upload_with_progress(filename, filepath):
 
 ftp = ftplib.FTP(FTP_HOST)
 ftp.login(FTP_USER, FTP_PASS)
-ftp.cwd('/') # Altere para o diretório desejado no servidor FTP
+ftp.cwd(config["FTP_DIR"])
 
 upload_with_progress(BACKUP_FILE, f'{BACKUP_DIR}/{BACKUP_FILE}')
 
