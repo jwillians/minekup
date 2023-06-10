@@ -16,7 +16,6 @@ with open('config.json') as config_file:
 FTP_HOST = config["FTP_HOST"]
 FTP_USER = config["FTP_USER"]
 FTP_PASS = config["FTP_PASS"]
-
 MINECRAFT_DIR = config["MINECRAFT_DIR"]
 BACKUP_DIR = config["BACKUP_DIR"]
 LOG_DIR = config["LOG_DIR"]
