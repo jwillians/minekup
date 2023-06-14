@@ -20,8 +20,10 @@ MINECRAFT_DIR = config["MINECRAFT_DIR"]
 BACKUP_DIR = config["BACKUP_DIR"]
 LOG_DIR = config["LOG_DIR"]
 PAPER_JAR = config["PAPER_JAR"]
-API_PAPER = config["PAPER_API"]
 VERSION_HISTORY = config["VERSION_HISTORY"]
+API_PAPER = config["PAPER_API"]
+PAPER_VERSION = config["PAPER_VERSION"]
+api_paper = API_PAPER + PAPER_VERSION + "/"
 
 # Cria as pastas de backup e log se elas não existirem
 Path(BACKUP_DIR).mkdir(parents=True, exist_ok=True)
@@ -37,6 +39,13 @@ LOG_FILE = f"{LOG_DIR}/backup_{NOW}.log"
 # Configurando o logger
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO, 
                     format='%(asctime)s:%(levelname)s:%(message)s')
+
+# Para mostrar o log tanto no console quanto no arquivo
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)
 
 def log_and_print(msg):
     print(msg)
@@ -112,11 +121,12 @@ if len(ftp_files) > 5:
 log_and_print("Iniciando a atualização do servidor Minecraft...")
 
 # Obtém a versão mais recente do servidor PaperMC
-response = requests.get(API_PAPER)
+response = requests.get(api_paper)
 response.raise_for_status()
 
 latest_build = response.json()['builds'][-1]
-latest_paper_url = f"https://papermc.io/api/v2/projects/paper/versions/1.19.4/builds/{latest_build}/downloads/paper-1.19.4-{latest_build}.jar"
+full_version = f"{PAPER_VERSION}-{latest_build}"
+latest_paper_url = f"https://papermc.io/api/v2/projects/paper/versions/{PAPER_VERSION}/builds/{latest_build}/downloads/paper-{full_version}.jar"
 
 # Verifique se a versão já foi baixada
 try:
@@ -125,9 +135,14 @@ try:
 except FileNotFoundError:
     version_history = {}
 
-if latest_build in version_history.values():
-    log_and_print(f"Versão {latest_build} já baixada.")
+# Obtenha a versão atual do servidor
+current_version = list(version_history.values())[-1] if version_history else "N/A"
+
+if full_version in version_history.values():
+    log_and_print(f"Versão atual {full_version} já é a mais recente.")
 else:
+    log_and_print(f"Versão atual do servidor: {current_version}")
+    log_and_print(f"Atualizando para a versão: {full_version}")
     # Remove o arquivo antigo, se existir
     old_paper_jar = f"{MINECRAFT_DIR}/paper.jarOLD"
     if os.path.exists(old_paper_jar):
@@ -160,11 +175,11 @@ else:
     log_and_print(f"Arquivo {temp_paper_jar} renomeado para {PAPER_JAR}")
 
     # Adicione a nova versão ao arquivo de histórico
-    version_history[str(datetime.now())] = latest_build
+    version_history[str(datetime.now())] = full_version
     with open(VERSION_HISTORY, 'w') as f:
         json.dump(version_history, f, indent=4)
 
-    log_and_print(f"Versão {latest_build} baixada com sucesso.")
+    log_and_print(f"Versão {full_version} baixada com sucesso.")
 
 log_and_print("Atualização do servidor Minecraft concluída com sucesso")
 
