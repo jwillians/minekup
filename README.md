@@ -1,6 +1,6 @@
 ### MineKup
 
-MineKup é um script simples, mas poderoso, escrito em Python, projetado para ajudar os administradores de servidores Minecraft a fazer backups de seus servidores Minecraft (Paper). Ele executa o backup do servidor localmente e remotamente (via FTP) e, em seguida, atualiza o servidor Paper para a versão especificada ou mais recente disponível.
+MineKup é um script simples, mas poderoso, escrito em Python, projetado para ajudar os administradores de servidores Minecraft a fazer backups de seus servidores Minecraft (Paper). Ele executa o backup do servidor localmente e remotamente (via FTP) e, em seguida, atualiza o servidor Paper para a versão especificada ou mais recente disponível. Além disso, agora suporta a configuração do número de backups a serem mantidos localmente e no servidor FTP.
 
 ## Recursos
 
@@ -8,10 +8,11 @@ MineKup é um script simples, mas poderoso, escrito em Python, projetado para aj
 - Faz backup do seu servidor de Minecraft remotamente via FTP.
 - Atualiza seu servidor PaperMC para a versão especificada ou mais recente disponível.
 - Configurações facilmente ajustáveis em um arquivo de configuração JSON.
+- Configuração do número de backups a serem mantidos localmente e no servidor FTP.
 
 ## Dependências
 
-Este script usa os módulos Python `requests` e `tqdm`. Você pode instalá-los com o seguinte comando:
+Este script usa os módulos Python `requests` , `tqdm` e `termcolor`. Você pode instalá-los com o seguinte comando:
 
 ```shell
 pip install requests tqdm termcolor
@@ -27,8 +28,10 @@ Então, renomeie o arquivo config.json.example para config.json e ajuste as conf
     "FTP_USER": "seu_usuario_ftp",
     "FTP_PASS": "sua_senha_ftp",
     "FTP_DIR": "diretorio_destino",
+    "FTP_BACKUP_COUNT": "5",
     "MINECRAFT_DIR": "nome_diretorio_minecraft",
     "BACKUP_DIR": "nome_diretorio_backups",
+    "LOCAL_BACKUP_COUNT": "5",
     "LOG_DIR": "nome_diretorio_logs",
     "PAPER_JAR": "caminho_completo_do_paper.jar",
     "VERSION_HISTORY": "caminho_completo_do_arquivo_de_historico_de_versao",
@@ -62,18 +65,18 @@ Por favor, note que a versão que você especificar deve ser uma versão válida
 
 ### MineKup
 
-MineKup is a simple yet powerful script, written in Python, designed to assist Minecraft server administrators in backing up their Minecraft servers (Paper). It carries out the server backup locally and remotely (via FTP), and then updates the Paper server to the specified version or the latest version available.
+MineKup is a simple yet powerful script, written in Python, designed to assist Minecraft server administrators in backing up their Minecraft servers (Paper). It carries out the server backup locally and remotely (via FTP), and then updates the Paper server to the specified version or the latest version available. Also, it now supports setting the number of backups to be kept locally and on the FTP server.
 
 ## Features
 - Backs up your Minecraft server locally.
 - Backs up your Minecraft server remotely via FTP.
 - Updates your PaperMC server to the specified version or the latest available version.
 - Easily adjustable settings in a JSON configuration file.
-
+- Setting the number of backups to be kept locally and on the FTP server.
 
 ## Dependencies
 
-This script uses the Python modules requests and tqdm. You can install them with the following command:
+This script uses the Python modules `requests` , `tqdm` and `termcolor`. You can install them with the following command:
 
 ```shell
 pip install requests tqdm termcolor
@@ -90,11 +93,14 @@ Then rename the file config.json.example to config.json and adjust the settings.
     "FTP_USER": "your_ftp_user",
     "FTP_PASS": "your_ftp_pass",
     "FTP_DIR": "destination_directory",
+    "FTP_BACKUP_COUNT": "5",
     "MINECRAFT_DIR": "minecraft_directory_name",
     "BACKUP_DIR": "backups_directory_name",
+    "LOCAL_BACKUP_COUNT": "5",
     "LOG_DIR": "logs_directory_name",
-    "PAPER_API": "papermc_api_url",
-    "VERSION_HISTORY": "version_history_file_name"
+    "API_PAPER": "papermc_api_url",
+    "VERSION_HISTORY": "version_history_file_name",
+    "PAPER_VERSION": "1.20"
 }
 ```
 Replace the values of the fields with your own FTP host, username, password, etc. After adjusting the settings, you can run the script with:

@@ -20,8 +20,10 @@ with open('config.json') as config_file:
 FTP_HOST = config["FTP_HOST"]
 FTP_USER = config["FTP_USER"]
 FTP_PASS = config["FTP_PASS"]
+FTP_BACKUP_COUNT = config["FTP_BACKUP_COUNT"]
 MINECRAFT_DIR = config["MINECRAFT_DIR"]
 BACKUP_DIR = config["BACKUP_DIR"]
+LOCAL_BACKUP_COUNT = config["LOCAL_BACKUP_COUNT"]
 LOG_DIR = config["LOG_DIR"]
 PAPER_JAR = config["PAPER_JAR"]
 VERSION_HISTORY = config["VERSION_HISTORY"]
@@ -108,20 +110,19 @@ try:
 except:
     log_and_print('\n' + colored('Falha no upload FTP!', 'red') + '\n')
 
-# Remove backups antigos
+# Removendo backups locais mais antigos
 backups = sorted(Path(BACKUP_DIR).glob('backup_*.tar.gz'))
-if len(backups) > 5:
-    for backup in backups[:-5]:
+if len(backups) > LOCAL_BACKUP_COUNT:
+    for backup in backups[:-LOCAL_BACKUP_COUNT]:
         backup.unlink()
 
-log_and_print(colored('Backups antigos removidos', 'green'))
-
+# Removendo backups FTP mais antigos
 ftp_files = ftp.nlst()
 ftp_files.sort(reverse=True)
 ftp_files = [file for file in ftp_files if 'backup' in file]
 
-if len(ftp_files) > 5:
-    for file in ftp_files[5:]:
+if len(ftp_files) > FTP_BACKUP_COUNT:
+    for file in ftp_files[FTP_BACKUP_COUNT:]:
         ftp.delete(file)
 
 # Inicia a atualização do servidor Minecraft
