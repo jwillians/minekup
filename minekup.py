@@ -1,3 +1,4 @@
+# Importa as bibliotecas necessárias
 import os
 import json
 import ftplib
@@ -5,6 +6,7 @@ import tarfile
 import shutil
 import requests
 import logging
+import re
 from tqdm import tqdm
 from pathlib import Path
 from datetime import datetime
@@ -14,6 +16,7 @@ from termcolor import colored
 with open('config.json') as config_file:
     config = json.load(config_file)
 
+# Pega as informações do arquivo de configuração
 FTP_HOST = config["FTP_HOST"]
 FTP_USER = config["FTP_USER"]
 FTP_PASS = config["FTP_PASS"]
@@ -37,13 +40,18 @@ NOW = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 BACKUP_FILE = f"backup_{NOW}.tar.gz"
 LOG_FILE = f"{LOG_DIR}/backup_{NOW}.log"
 
-# Configurando o logger
+# Configura o log
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO, 
                     format='%(asctime)s:%(levelname)s:%(message)s')
 
+# Funções para remover cores do texto e logar mensagens
+def remove_color(message):
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    return ansi_escape.sub('', message)
+
 def log_and_print(msg):
     print(msg)
-    logging.info(msg)
+    logging.info(remove_color(msg))
 
 # Função para calcular o tamanho total do diretório
 def get_dir_size(path='.'):
@@ -56,6 +64,7 @@ def get_dir_size(path='.'):
                 total += get_dir_size(entry.path)
     return total
 
+# Inicia o backup
 log_and_print('\n' + colored('Iniciando o processo de backup...', 'yellow') + '\n')
 
 total_size = get_dir_size(MINECRAFT_DIR)
@@ -70,6 +79,7 @@ with tarfile.open(f"{BACKUP_DIR}/{BACKUP_FILE}", "w:gz") as tar:
 log_and_print('\n' + colored('Backup criado!', 'green') + '\n')
 log_and_print('\n' + colored('Iniciando o processo de upload FTP...','yellow') + '\n')
 
+# Função para fazer upload com progresso
 def upload_with_progress(filename, filepath):
     with open(filepath, 'rb') as f:
         total_size = os.path.getsize(filepath)
@@ -84,18 +94,21 @@ def upload_with_progress(filename, filepath):
         ftp.storbinary('STOR %s' % filename, f, 1024, handle_buffer)
         progress_bar.close()
 
+# Configura FTP e faz upload
 ftp = ftplib.FTP(FTP_HOST)
 ftp.login(FTP_USER, FTP_PASS)
 ftp.cwd(config["FTP_DIR"])
 
 upload_with_progress(BACKUP_FILE, f'{BACKUP_DIR}/{BACKUP_FILE}')
 
+# Verifica se o upload foi bem sucedido
 try:
     ftp.voidcmd('NOOP')
     log_and_print('\n' + colored('Upload FTP concluído com sucesso!', 'green') + '\n')
 except:
     log_and_print('\n' + colored('Falha no upload FTP!', 'red') + '\n')
 
+# Remove backups antigos
 backups = sorted(Path(BACKUP_DIR).glob('backup_*.tar.gz'))
 if len(backups) > 5:
     for backup in backups[:-5]:
@@ -122,14 +135,14 @@ latest_build = response.json()['builds'][-1]
 full_version = f"{PAPER_VERSION}-{latest_build}"
 latest_paper_url = f"https://papermc.io/api/v2/projects/paper/versions/{PAPER_VERSION}/builds/{latest_build}/downloads/paper-{full_version}.jar"
 
-# Verifique se a versão já foi baixada
+# Verifica se a versão já foi baixada
 try:
     with open(VERSION_HISTORY, 'r') as f:
         version_history = json.load(f)
 except FileNotFoundError:
     version_history = {}
 
-# Obtenha a versão atual do servidor
+# Obtém a versão atual do servidor
 current_version = list(version_history.values())[-1] if version_history else "N/A"
 
 if full_version in version_history.values():
@@ -178,4 +191,5 @@ else:
 
 log_and_print(colored("Atualização do servidor Minecraft concluída com sucesso!", "green"))
 
+# Fecha a conexão FTP
 ftp.quit()
