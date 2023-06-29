@@ -1,0 +1,13 @@
+{
+    "FTP_HOST": "seu.host.ftp",
+    "FTP_USER": "seu_usuario_ftp",
+    "FTP_PASS": "sua_senha_ftp",
+    "FTP_DIR": "diretorio_destino",
+    "MINECRAFT_DIR": "nome_diretorio_minecraft",
+    "BACKUP_DIR": "nome_diretorio_backups",
+    "LOG_DIR": "nome_diretorio_logs",
+    "PAPER_JAR": "caminho_completo_do_paper.jar",
+    "VERSION_HISTORY": "caminho_completo_do_arquivo_de_historico_de_versao",
+    "API_PAPER": "https://papermc.io/api/v2/projects/paper/versions/",
+    "PAPER_VERSION": "1.20"
+}
