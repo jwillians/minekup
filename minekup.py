@@ -8,6 +8,7 @@ import logging
 from tqdm import tqdm
 from pathlib import Path
 from datetime import datetime
+from termcolor import colored
 
 # Carrega o arquivo de configuração.
 with open('config.json') as config_file:
@@ -40,13 +41,6 @@ LOG_FILE = f"{LOG_DIR}/backup_{NOW}.log"
 logging.basicConfig(filename=LOG_FILE, level=logging.INFO, 
                     format='%(asctime)s:%(levelname)s:%(message)s')
 
-# Para mostrar o log tanto no console quanto no arquivo
-console = logging.StreamHandler()
-console.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s:%(levelname)s:%(message)s')
-console.setFormatter(formatter)
-logging.getLogger('').addHandler(console)
-
 def log_and_print(msg):
     print(msg)
     logging.info(msg)
@@ -62,25 +56,25 @@ def get_dir_size(path='.'):
                 total += get_dir_size(entry.path)
     return total
 
-log_and_print("Iniciando o processo de backup...")
+log_and_print('\n' + colored('Iniciando o processo de backup...', 'yellow') + '\n')
 
 total_size = get_dir_size(MINECRAFT_DIR)
 with tarfile.open(f"{BACKUP_DIR}/{BACKUP_FILE}", "w:gz") as tar:
-    with tqdm(total=total_size, unit='B', unit_scale=True, desc="Criando backup") as pbar:
+    with tqdm(total=total_size, unit='B', unit_scale=True, desc=colored("Criando backup... ", "green")) as pbar:
         for dirpath, dirnames, filenames in os.walk(MINECRAFT_DIR):
             for f in filenames:
                 fp = os.path.join(dirpath, f)
                 tar.add(fp)
                 pbar.update(os.path.getsize(fp))
 
-log_and_print("Backup criado")
-log_and_print("Iniciando o processo de upload FTP...")
+log_and_print('\n' + colored('Backup criado!', 'green') + '\n')
+log_and_print('\n' + colored('Iniciando o processo de upload FTP...','yellow') + '\n')
 
 def upload_with_progress(filename, filepath):
     with open(filepath, 'rb') as f:
         total_size = os.path.getsize(filepath)
         upload_size = 0
-        progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True, desc="Carregando...")
+        progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True, desc=colored("Enviando... ", "green"))
 
         def handle_buffer(buf):
             nonlocal upload_size
@@ -98,16 +92,16 @@ upload_with_progress(BACKUP_FILE, f'{BACKUP_DIR}/{BACKUP_FILE}')
 
 try:
     ftp.voidcmd('NOOP')
-    log_and_print("Upload FTP concluído com sucesso")
+    log_and_print('\n' + colored('Upload FTP concluído com sucesso!', 'green') + '\n')
 except:
-    log_and_print("Falha no upload FTP")
+    log_and_print('\n' + colored('Falha no upload FTP!', 'red') + '\n')
 
 backups = sorted(Path(BACKUP_DIR).glob('backup_*.tar.gz'))
 if len(backups) > 5:
     for backup in backups[:-5]:
         backup.unlink()
 
-log_and_print("Backups antigos removidos")
+log_and_print(colored('Backups antigos removidos', 'green'))
 
 ftp_files = ftp.nlst()
 ftp_files.sort(reverse=True)
@@ -118,7 +112,7 @@ if len(ftp_files) > 5:
         ftp.delete(file)
 
 # Inicia a atualização do servidor Minecraft
-log_and_print("Iniciando a atualização do servidor Minecraft...")
+log_and_print('\n' + colored('Iniciando a atualização do servidor Minecraft...','yellow') + '\n')
 
 # Obtém a versão mais recente do servidor PaperMC
 response = requests.get(api_paper)
@@ -139,27 +133,28 @@ except FileNotFoundError:
 current_version = list(version_history.values())[-1] if version_history else "N/A"
 
 if full_version in version_history.values():
-    log_and_print(f"Versão atual {full_version} já é a mais recente.")
+    log_and_print(colored(f"Versão atual ", "green") + colored(f"{full_version}", "red") + colored(" já é a mais recente.", "green"))
 else:
-    log_and_print(f"Versão atual do servidor: {current_version}")
-    log_and_print(f"Atualizando para a versão: {full_version}")
+    log_and_print(colored("Versão atual do servidor: ", "green") + colored(f"{current_version}", "red"))
+    log_and_print(colored("Atualizando para a versão: ", "green") + colored(f"{full_version}", "red"))
+
     # Remove o arquivo antigo, se existir
     old_paper_jar = f"{MINECRAFT_DIR}/paper.jarOLD"
     if os.path.exists(old_paper_jar):
         os.remove(old_paper_jar)
-        log_and_print(f"Arquivo {old_paper_jar} removido.")
+        log_and_print(colored(f"Arquivo ", "green") + colored(f"{old_paper_jar}", "red") + colored(" removido.", "green"))
 
     # Renomeia o arquivo paper.jar atual para paper.jarOLD
     if os.path.exists(PAPER_JAR):
         os.rename(PAPER_JAR, old_paper_jar)
-        log_and_print(f"Arquivo {PAPER_JAR} renomeado para {old_paper_jar}")
+        log_and_print(colored(f"Arquivo ", "green") + colored(f"{PAPER_JAR}", "red") + colored(" renomeado para ", "green") + colored(f"{old_paper_jar}", "red"))
 
     # Faz download da versão mais recente
     response = requests.get(latest_paper_url, stream=True)
     response.raise_for_status()
     
     total_size_in_bytes= int(response.headers.get('content-length', 0))
-    progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True, desc=f"Baixando build {latest_build}")
+    progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True, desc=colored(f"Baixando build ", "green") + colored(f"{latest_build}", "red"))
 
     # Salva o arquivo com um nome temporário
     temp_paper_jar = f"{MINECRAFT_DIR}/paper-{latest_build}.jar"
@@ -172,15 +167,15 @@ else:
 
     # Renomeia o novo arquivo para paper.jar
     os.rename(temp_paper_jar, PAPER_JAR)
-    log_and_print(f"Arquivo {temp_paper_jar} renomeado para {PAPER_JAR}")
+    log_and_print(colored(f"Arquivo ", "green") + colored(f"{temp_paper_jar}", "red") + colored(" renomeado para ", "green") + colored(f"{PAPER_JAR}", "red"))
 
     # Adicione a nova versão ao arquivo de histórico
     version_history[str(datetime.now())] = full_version
     with open(VERSION_HISTORY, 'w') as f:
         json.dump(version_history, f, indent=4)
 
-    log_and_print(f"Versão {full_version} baixada com sucesso.")
+    log_and_print(colored(f"Versão ", "green") + colored(f"{full_version}", "red") + colored(" baixada com sucesso.", "green"))
 
-log_and_print("Atualização do servidor Minecraft concluída com sucesso")
+log_and_print(colored("Atualização do servidor Minecraft concluída com sucesso!", "green"))
 
 ftp.quit()

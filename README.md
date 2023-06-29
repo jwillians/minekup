@@ -14,12 +14,12 @@ MineKup é um script simples, mas poderoso, escrito em Python, projetado para aj
 Este script usa os módulos Python `requests` e `tqdm`. Você pode instalá-los com o seguinte comando:
 
 ```shell
-pip install requests tqdm
+pip install requests tqdm termcolor
 ```
 ## Uso
 
 Primeiro, clone este repositório para o seu sistema.
-Depois, ajuste as configurações no arquivo config.json. Aqui está um exemplo de como o arquivo de configuração pode ser:
+Então, renomeie o arquivo config.json.example para config.json e ajuste as configurações. Aqui está um exemplo de como o arquivo de configuração pode ser:
 
 ```shell
 {
@@ -38,8 +38,7 @@ Depois, ajuste as configurações no arquivo config.json. Aqui está um exemplo 
 
 ```
 
-Substitua os valores dos campos pelo seu próprio host FTP, nome de usuário, senha, etc.
-Depois de ajustar as configurações, você pode executar o script com:
+Substitua os valores dos campos pelo seu próprio host FTP, nome de usuário, senha, etc. Depois de ajustar as configurações, você pode executar o script com:
 
 ```shell
 python minekup.py
@@ -77,13 +76,13 @@ MineKup is a simple yet powerful script, written in Python, designed to assist M
 This script uses the Python modules requests and tqdm. You can install them with the following command:
 
 ```shell
-pip install requests tqdm
+pip install requests tqdm termcolor
 ```
 
 ## Usage
 
 First, clone this repository to your system.
-Then adjust the settings in the config.json file. Here's an example of what the configuration file might look like:
+Then rename the file config.json.example to config.json and adjust the settings. Here's an example of what the configuration file might look like:
 
 ```shell
 {
@@ -98,8 +97,7 @@ Then adjust the settings in the config.json file. Here's an example of what the 
     "VERSION_HISTORY": "version_history_file_name"
 }
 ```
-Replace the values of the fields with your own FTP host, username, password, etc.
-After adjusting the settings, you can run the script with:
+Replace the values of the fields with your own FTP host, username, password, etc. After adjusting the settings, you can run the script with:
 
 ```shell
 python minekup.py

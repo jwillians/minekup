@@ -7,7 +7,7 @@
     "BACKUP_DIR": "/home/jwillians/MineKup",
     "LOG_DIR": "/home/jwillians/MineKup/logs", 
     "PAPER_JAR": "/home/jwillians/New_Caprica/paper.jar",
-    "PAPER_VERSION": "1.20",
+    "PAPER_VERSION": "1.20.1",
     "PAPER_API": "https://papermc.io/api/v2/projects/paper/versions/",
     "VERSION_HISTORY": "/home/jwillians/New_Caprica/version_history.json"
 }
